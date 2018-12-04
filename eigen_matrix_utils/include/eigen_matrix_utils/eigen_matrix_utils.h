@@ -18,7 +18,7 @@ namespace eigen_utils
   {
     std::vector<std::vector<double>> mtx;
     if (!rosparam_utilities::getParamMatrix<double>(nh, key, mtx))
-      return -1;
+      return false;
     
     int nrows, ncols;
     nrows = mtx.size();
@@ -39,7 +39,7 @@ namespace eigen_utils
   {
     std::vector<double> vtc;
     if (!nh.getParam(key,vtc))
-      return -1;
+      return false;
     
     int nrows;
     nrows = vtc.size();
