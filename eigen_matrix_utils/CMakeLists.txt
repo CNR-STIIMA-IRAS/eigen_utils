@@ -3,6 +3,10 @@ project(eigen_matrix_utils)
 
 add_compile_options(-std=c++11 -funroll-loops  -Ofast)
 
+SET(WARN "${WARN} -Wno-unused-but-set-variable")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WARN}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARN}")
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp rosparam_utilities
 )

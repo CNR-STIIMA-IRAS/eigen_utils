@@ -160,7 +160,7 @@ inline double solve_quadprog2(LLT<MatrixXd,Lower> &chol,  double c1, VectorXd & 
                       const MatrixXd & CI, const VectorXd & ci0, 
                       VectorXd& x)
 {
-  int i, j, k, l; /* indices */
+  int i, /* j,*/ k, l; /* indices */
   int ip, me, mi;
   int n=g0.size();   
   int p=CE.cols(); 
@@ -477,7 +477,7 @@ inline bool add_constraint(MatrixXd& R, MatrixXd& J, VectorXd& d, int& iq, doubl
 #ifdef TRACE_SOLVER
   std::cerr << "Add constraint " << iq << '/';
 #endif
-	int i, j, k;
+  int /*i,*/ j, k;
 	double cc, ss, h, t1, t2, xny;
 	
   /* we have to find the Givens rotation which will reduce the element
