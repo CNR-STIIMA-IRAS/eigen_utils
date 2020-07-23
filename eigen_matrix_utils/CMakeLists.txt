@@ -35,8 +35,9 @@ install(TARGETS ${PROJECT_NAME}
 
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-  PATTERN ".svn" EXCLUDE
+  FILES_MATCHING  PATTERN "*.h"
+                  PATTERN "*.hpp"
+                  PATTERN ".svn" EXCLUDE
 )
 
 
