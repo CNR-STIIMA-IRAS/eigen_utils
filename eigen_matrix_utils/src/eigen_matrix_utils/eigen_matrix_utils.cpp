@@ -4,12 +4,12 @@
 namespace eigen_utils 
 {
 
-double standard_deviation(const Eigen::Ref< Eigen::VectorXd >& vet)
-{
-  Eigen::VectorXd mean_vet(vet.rows());
-  mean_vet.setConstant(vet.mean());
-  return std::sqrt((vet-mean_vet).dot(vet-mean_vet))/vet.rows();
-}
+// double standard_deviation(const Eigen::Ref< Eigen::VectorXd >& vet)
+// {
+//   Eigen::VectorXd mean_vet(vet.rows());
+//   mean_vet.setConstant(vet.mean());
+//   return std::sqrt((vet-mean_vet).dot(vet-mean_vet))/vet.rows();
+// }
 
 double correlation(const Eigen::Ref< Eigen::VectorXd >& vet1, const Eigen::Ref< Eigen::VectorXd >& vet2)
 {

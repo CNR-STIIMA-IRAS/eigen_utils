@@ -11,8 +11,88 @@
 namespace eigen_utils
 {
 
-double standard_deviation(const Eigen::Ref<Eigen::VectorXd>& vet);
-double correlation(const Eigen::Ref<Eigen::VectorXd>& vet1, const Eigen::Ref<Eigen::VectorXd>& vet2);
+/**
+ * RESIZE - SAFE FUNCTION CALLED ONLY IF THE MATRIX IS DYNAMICALLY CREATED AT RUNTIME
+ */
+template<typename Derived,
+         std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic) 
+                        || (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic) 
+                        , int> = 0> bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
+{
+  Eigen::MatrixBase<Derived>& mat = const_cast< Eigen::MatrixBase<Derived>& >(m);
+  if((Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic) 
+  && (Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic))
+  {
+    std::cout << "dynamic rows and cols at runtime :" << rows <<"," <<"cols" << std::endl;
+    mat.derived().resize(rows,cols);
+  }
+  else if(Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic) 
+  {
+    std::cout << "dynamc rows at runtime:" << rows<< std::endl;
+    mat.derived().resize(rows,Eigen::NoChange);
+  }
+  else if(Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic) 
+  {
+    std::cout << "dynamc cols at runtime: " << cols<< std::endl;
+    mat.derived().resize(Eigen::NoChange, cols);
+  }
+  return true;
+}
+
+
+/**
+ * RESIZE - SAFE FUNCTION CALLED ONLY IF THE MATRIX IS DYNAMICALLY CREATED AT RUNTIME
+ */
+template<typename Derived,
+         std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic) 
+                        && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic) 
+                        , int> = 0> bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
+{
+  return true;
+}
+
+
+template <typename Derived>
+void standard_deviation(const Eigen::MatrixBase<Derived>& vet)
+{
+  static int  nrows  = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
+  static Eigen::MatrixBase<Derived> mean_vet;
+  if( nrows == Eigen::Dynamic)
+  {
+    nrows = vet.rows();
+    mean_vet.resize(vet.rows());
+  }
+  mean_vet.setConstant(vet.mean());
+  return std::sqrt((vet-mean_vet).dot(vet-mean_vet))/nrows;
+}
+
+
+template <typename Derived>
+double correlation(const Eigen::MatrixBase<Derived>& vet1, const Eigen::MatrixBase<Derived>& vet2)
+{
+  static int  nrows  = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
+  static Eigen::MatrixBase<Derived> mean_vet1;
+  static Eigen::MatrixBase<Derived> mean_vet2;
+  static Eigen::MatrixBase<Derived> vet1_no_mean;
+  static Eigen::MatrixBase<Derived> vet2_no_mean;
+  if( nrows == Eigen::Dynamic)
+  {
+    nrows = vet1.rows();
+    mean_vet1.resize(nrows);
+    mean_vet2.resize(nrows);
+    vet1_no_mean.resize(nrows);
+    vet1_no_mean.resize(nrows);
+  }
+  
+  mean_vet1.setConstant(vet1.mean());
+  mean_vet2.setConstant(vet2.mean());
+  vet1_no_mean = vet1 - mean_vet1;
+  vet2_no_mean = vet2 - mean_vet2;
+  
+  return ( vet1_no_mean.dot(vet2_no_mean) ) / std::sqrt( ( vet1_no_mean.dot(vet1_no_mean) ) * ( vet2_no_mean.dot(vet2_no_mean) ) );
+  
+}
+
 
 inline bool getParam( const ros::NodeHandle& nh,  const std::string& key, Eigen::MatrixXd& matrix)
 {
