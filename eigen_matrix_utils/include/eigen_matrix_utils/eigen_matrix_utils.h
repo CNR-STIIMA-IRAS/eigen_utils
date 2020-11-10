@@ -48,7 +48,8 @@ template<typename Derived,
                         && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic) 
                         , int> = 0> bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
 {
-  return true;
+  return Eigen::MatrixBase<Derived>::RowsAtCompileTime == rows 
+      && Eigen::MatrixBase<Derived>::ColsAtCompileTime == cols;
 }
 
 
@@ -129,6 +130,121 @@ inline bool getParam( const ros::NodeHandle& nh,  const std::string& key, Eigen:
     vector(iR) = vtc.at(iR);
 
   return true;
+}
+
+inline void setZero(double& m)
+{
+  m = 0;
+}
+
+template<typename Derived>
+inline void setZero(Eigen::MatrixBase<Derived>& m)
+{
+  m.setZero();
+}
+
+inline void setIdentity(double& m)
+{
+  m = 1;
+}
+
+template<typename Derived>
+void setIdentity(Eigen::MatrixBase<Derived>& m)
+{
+  m.setIdentity();
+}
+
+inline int rows(const double& m)
+{
+  return 1;
+}
+
+template<typename Derived>
+inline int rows(const Eigen::MatrixBase<Derived>& m)
+{
+  return m.rows();
+}
+
+inline int cols(const double& m)
+{
+  return 1;
+}
+
+template<typename Derived>
+inline int cols(const Eigen::MatrixBase<Derived>& m)
+{
+  return m.cols();
+}
+
+inline double& block(double& m, Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  return m;
+}
+
+inline const double& block(const double& m, Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  return m;
+}
+
+template<typename Derived>
+inline Eigen::Block<Derived> block(Eigen::MatrixBase<Derived>& m, 
+                          Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  return Eigen::Block<Derived>(m.derived(),startRow, startCol, blockRows, blockCols);
+}
+ 
+template<typename Derived>
+inline const Eigen::Block<Derived> block(const Eigen::MatrixBase<Derived>& m, 
+                          Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  return Eigen::Block<Derived>(m.derived(),startRow, startCol, blockRows, blockCols);
+}
+
+inline bool copy_block(double& lhs, const double& rhs, Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  lhs = rhs;
+  return startRow==0 && startCol==0 && blockRows==1 && blockCols==1;
+}
+
+template<typename Derived, typename OtherDerived>
+inline bool copy_block(Eigen::MatrixBase<Derived>& lhs, 
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols, 
+              const Eigen::MatrixBase<OtherDerived>& rhs)
+{
+  if((blockRows == rhs.rows() && blockCols == rhs.cols() )
+  && (startRow + blockRows <= lhs.rows() && startCol + blockCols <= lhs.cols() ))
+  {
+    lhs.block(startRow, startCol, blockRows, blockCols) = rhs;
+    return true;
+  }
+  return false;
+}
+
+template<typename Derived>
+inline bool copy_block(Eigen::MatrixBase<Derived>& lhs, 
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols, 
+              const double& rhs)
+{
+  if(startRow + blockRows <= lhs.rows() && startCol + blockCols <= lhs.cols() )
+  {
+    lhs.block(startRow, startCol, blockRows, blockCols).setConstant(rhs);
+    return true;
+  }
+  return false;
+}
+
+template<typename Derived>
+inline bool copy_block(double& lhs,
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols, 
+              const Eigen::MatrixBase<Derived>& rhs)
+{
+  if((blockRows==1 && blockCols==1)
+  && (startRow + blockRows <= rhs.rows() && startCol + blockCols <= rhs.cols()))
+  {
+    lhs = rhs(startRow,startCol);
+    return true;
+  }
+  return false;
 }
 
 
