@@ -1,11 +1,10 @@
 #ifndef eigen_matrix_utils_201806130948
 #define eigen_matrix_utils_201806130948
 
+#include <exception>
+#include <Eigen/Core>
+
 #include <ros/ros.h>
-#include <XmlRpc.h>
-#include <boost/array.hpp>
-#include <bitset>
-#include <eigen3/Eigen/Core>
 #include <rosparam_utilities/rosparam_utilities.h>
 
 namespace eigen_utils
@@ -23,17 +22,14 @@ template<typename Derived,
   if((Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic) 
   && (Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic))
   {
-    std::cout << "dynamic rows and cols at runtime :" << rows <<"," <<"cols" << std::endl;
     mat.derived().resize(rows,cols);
   }
   else if(Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic) 
   {
-    std::cout << "dynamc rows at runtime:" << rows<< std::endl;
     mat.derived().resize(rows,Eigen::NoChange);
   }
   else if(Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic) 
   {
-    std::cout << "dynamc cols at runtime: " << cols<< std::endl;
     mat.derived().resize(Eigen::NoChange, cols);
   }
   return true;
@@ -153,6 +149,82 @@ void setIdentity(Eigen::MatrixBase<Derived>& m)
 {
   m.setIdentity();
 }
+
+
+inline double* data(double& v)
+{
+  return &v;
+}
+
+template<typename Derived>
+inline typename Derived::Scalar* data(Eigen::MatrixBase<Derived>& m)
+{
+  Eigen::Ref<Eigen::Matrix<
+    typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime> 
+            > _m(m);
+  return _m.data();
+}
+
+inline const double* data(const double& v)
+{
+  return &v;
+}
+
+template<typename Derived>
+inline const typename Derived::Scalar* data(const Eigen::Ref<Derived const>& m)
+{
+  return m.data();
+}
+
+inline const double& at(const double& v, const int& i, const int& j)
+{
+  if((i!=0)||(j!=0))
+    throw std::invalid_argument("Input is double, while the index is greater than 0");
+  return v;
+}
+
+template<typename Derived>
+inline const double& at(const Eigen::MatrixBase<Derived>& m, const int& i, const int& j)
+{
+  return m(i,j);
+}
+
+inline double& at(double& v, const int& i, const int& j)
+{
+  if((i!=0)||(j!=0))
+    throw std::invalid_argument("Input is double, while the index is greater than 0");
+  return v;
+}
+
+template<typename Derived>
+inline double& at(Eigen::MatrixBase<Derived>& m, const int& i, const int& j)
+{
+  return m(i,j);
+}
+
+
+inline double norm(const double& m)
+{
+  return std::fabs(m);
+}
+
+template<typename Derived>
+inline double norm(const Eigen::MatrixBase<Derived>& m)
+{
+  return m.norm();
+}
+
+inline int size(const double& m)
+{
+  return 1;
+}
+
+template<typename Derived>
+inline int size(const Eigen::MatrixBase<Derived>& m)
+{
+  return m.size();
+}
+
 
 inline int rows(const double& m)
 {
