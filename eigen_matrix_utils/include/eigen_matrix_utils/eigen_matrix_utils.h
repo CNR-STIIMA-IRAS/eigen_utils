@@ -271,17 +271,25 @@ inline const Eigen::Block<Derived> block(const Eigen::MatrixBase<Derived>& m,
 {
   return Eigen::Block<Derived>(m.derived(),startRow, startCol, blockRows, blockCols);
 }
-
-inline bool copy_block(double& lhs, const double& rhs, Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+//================================================================
+//
+//================================================================
+inline bool copy_to_block(double& lhs, const double& rhs, 
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
 {
   lhs = rhs;
-  return startRow==0 && startCol==0 && blockRows==1 && blockCols==1;
+  bool ret = startRow==0 && startCol==0 && blockRows==1 && blockCols==1;
+  if(!ret)
+  {
+    std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments" 
+              <<  startRow <<","<< startCol <<","<< blockRows <<","<< blockCols << std::endl;
+  }
+  return ret;
 }
 
-template<typename Derived, typename OtherDerived>
-inline bool copy_block(Eigen::MatrixBase<Derived>& lhs, 
-              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols, 
-              const Eigen::MatrixBase<OtherDerived>& rhs)
+template<typename LHS, typename RHS>
+inline bool copy_to_block(Eigen::MatrixBase<LHS>& lhs, const Eigen::MatrixBase<RHS>& rhs,
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
 {
   if((blockRows == rhs.rows() && blockCols == rhs.cols() )
   && (startRow + blockRows <= lhs.rows() && startCol + blockCols <= lhs.cols() ))
@@ -289,26 +297,87 @@ inline bool copy_block(Eigen::MatrixBase<Derived>& lhs,
     lhs.block(startRow, startCol, blockRows, blockCols) = rhs;
     return true;
   }
+  std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments" 
+              <<  startRow <<","<< startCol <<","<< blockRows <<","<< blockCols << std::endl;
   return false;
 }
 
 template<typename Derived>
-inline bool copy_block(Eigen::MatrixBase<Derived>& lhs, 
-              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols, 
-              const double& rhs)
+inline bool copy_to_block(Eigen::MatrixBase<Derived>& lhs, const double& rhs,
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
 {
   if(startRow + blockRows <= lhs.rows() && startCol + blockCols <= lhs.cols() )
   {
     lhs.block(startRow, startCol, blockRows, blockCols).setConstant(rhs);
     return true;
   }
+  std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments" 
+              <<  startRow <<","<< startCol <<","<< blockRows <<","<< blockCols << std::endl;
   return false;
 }
 
 template<typename Derived>
-inline bool copy_block(double& lhs,
-              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols, 
-              const Eigen::MatrixBase<Derived>& rhs)
+inline bool copy_to_block(double& lhs, const Eigen::MatrixBase<Derived>& rhs,
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  if((blockRows==1 && blockCols==1)
+  && (startRow + blockRows <= rhs.rows() && startCol + blockCols <= rhs.cols()))
+  {
+    lhs = rhs(startRow,startCol);
+    return true;
+  }
+  return false;
+}
+
+
+//================================================================
+//
+//================================================================
+inline bool copy_from_block(double& lhs, const double& rhs, 
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  lhs = rhs;
+  bool ret = startRow==0 && startCol==0 && blockRows==1 && blockCols==1;
+  if(!ret)
+  {
+    std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments" 
+              <<  startRow <<","<< startCol <<","<< blockRows <<","<< blockCols << std::endl;
+  }
+  return ret;
+}
+
+template<typename LHS, typename RHS>
+inline bool copy_from_block(Eigen::MatrixBase<LHS>& lhs, const Eigen::MatrixBase<RHS>& rhs,
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  if((blockRows == lhs.rows() && blockCols == lhs.cols() )
+  && (startRow + blockRows <= rhs.rows() && startCol + blockCols <= rhs.cols() ))
+  {
+    lhs = rhs.block(startRow, startCol, blockRows, blockCols);
+    return true;
+  }
+  std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments" 
+              <<  startRow <<","<< startCol <<","<< blockRows <<","<< blockCols << std::endl;
+  return false;
+}
+
+template<typename Derived>
+inline bool copy_from_block(Eigen::MatrixBase<Derived>& lhs, const double& rhs,
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
+{
+  if(startRow==0 && startCol==0 && blockRows==1 && blockCols==1)
+  {
+    lhs.setConstant(rhs);
+    return true;
+  }
+  std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments" 
+              <<  startRow <<","<< startCol <<","<< blockRows <<","<< blockCols << std::endl;
+  return false;
+}
+
+template<typename Derived>
+inline bool copy_from_block(double& lhs, const Eigen::MatrixBase<Derived>& rhs,
+              Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
 {
   if((blockRows==1 && blockCols==1)
   && (startRow + blockRows <= rhs.rows() && startCol + blockCols <= rhs.cols()))
