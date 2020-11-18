@@ -1,8 +1,10 @@
 #ifndef eigen_matrix_utils_201806130948
 #define eigen_matrix_utils_201806130948
 
+#include <sstream>
 #include <exception>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 
 #include <ros/ros.h>
 #include <rosparam_utilities/rosparam_utilities.h>
@@ -32,7 +34,7 @@ template<typename Derived,
   {
     mat.derived().resize(Eigen::NoChange, cols);
   }
-  return true;
+  return (mat.derived().rows() == rows) && (mat.derived().cols() == cols);
 }
 
 
@@ -237,6 +239,19 @@ inline int rows(const Eigen::MatrixBase<Derived>& m)
   return m.rows();
 }
 
+
+inline int rank(const double& m)
+{
+  return 1;
+}
+
+template<typename Derived>
+inline int rank(const Eigen::MatrixBase<Derived>& m)
+{
+  Eigen::FullPivLU<Derived> lu_decomp(m);
+  return lu_decomp.rank();
+}
+
 inline int cols(const double& m)
 {
   return 1;
@@ -281,7 +296,7 @@ inline bool copy_to_block(double& lhs, const double& rhs,
   bool ret = startRow==0 && startCol==0 && blockRows==1 && blockCols==1;
   if(!ret)
   {
-    std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments" 
+    std::cerr << "Error: " << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": arguments " 
               <<  startRow <<","<< startCol <<","<< blockRows <<","<< blockCols << std::endl;
   }
   return ret;
@@ -386,6 +401,74 @@ inline bool copy_from_block(double& lhs, const Eigen::MatrixBase<Derived>& rhs,
     return true;
   }
   return false;
+}
+
+
+
+
+inline std::string to_string(const double& m, bool transpose = true)
+{
+  return std::to_string(m);
+}
+
+template<typename Derived>
+inline std::string to_string(const Eigen::MatrixBase<Derived>& m, bool transpose = true)
+{
+  Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+  std::stringstream ss;
+  if(transpose)
+    ss << m.transpose().format(CleanFmt);
+  else
+    ss << m.format(CleanFmt);
+  return ss.str();
+}
+
+inline bool solve(double& ret, const double& A, const double& b )
+{
+  ret = b / A;
+  return true;
+}
+
+template<typename Derived>
+inline bool solve(Eigen::MatrixBase<Derived>& x, const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+{
+  Eigen::VectorXd _x;
+  if((A.rows()==A.cols()) && (eigen_utils::rank(A) == A.rows()))
+  {
+    _x = A.fullPivLu().solve(b);
+  }
+  else if(eigen_utils::rank(A) == std::min(A.rows(),A.cols()))
+  {
+    _x = A.colPivHouseholderQr().solve(b);
+  }
+  else
+  {
+    _x = A.jacobiSvd().solve(b);
+  }
+
+  return (eigen_utils::copy_to_block(x, _x, 0, 0, _x.rows(),1) );
+}
+
+
+template<typename Derived>
+inline bool solve(Eigen::MatrixBase<Derived>& x, const Eigen::MatrixXd& A, const double& b)
+{
+  Eigen::VectorXd _b(1); _b << b;
+  Eigen::VectorXd _x;
+  if((A.rows()==A.cols()) && (eigen_utils::rank(A) == A.rows()))
+  {
+    _x = A.fullPivLu().solve(_b);
+  }
+  else if(eigen_utils::rank(A) == std::min(A.rows(),A.cols()))
+  {
+    _x = A.colPivHouseholderQr().solve(_b);
+  }
+  else
+  {
+    _x = A.jacobiSvd().solve(_b);
+  }
+
+  return (eigen_utils::copy_to_block(x, _x, 0, 0, _x.rows(),1) );
 }
 
 
