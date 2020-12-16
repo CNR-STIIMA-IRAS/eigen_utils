@@ -3,10 +3,11 @@
 
 #include <sstream>
 #include <exception>
+
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-#include <ros/ros.h>
+#include <ros/node_handle.h>
 #include <rosparam_utilities/rosparam_utilities.h>
 
 namespace eigen_utils
@@ -94,6 +95,26 @@ inline bool getParam(const ros::NodeHandle& nh,
     vector(iR) = vtc.at(iR);
 
   return true;
+}
+
+inline std::string to_string(const double& m, bool transpose = true)
+{
+    std::ostringstream out;
+    out.precision(4);
+    out << std::fixed << m;
+    return out.str();
+}
+
+template<typename Derived>
+inline std::string to_string(const Eigen::MatrixBase<Derived>& m, bool transpose = true)
+{
+  Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+  std::stringstream ss;
+  if(transpose)
+    ss << m.transpose().format(CleanFmt);
+  else
+    ss << m.format(CleanFmt);
+  return ss.str();
 }
 
 
