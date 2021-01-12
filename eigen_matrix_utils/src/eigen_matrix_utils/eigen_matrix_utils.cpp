@@ -1,3 +1,4 @@
+#include <eigen_matrix_utils/overloads.h>
 #include <eigen_matrix_utils/eigen_matrix_utils.h>
 
 

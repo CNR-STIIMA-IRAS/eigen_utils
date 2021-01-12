@@ -56,47 +56,6 @@ double correlation(const Eigen::MatrixBase<Derived>& vet1, const Eigen::MatrixBa
 }
 
 
-inline bool getParam(const ros::NodeHandle& nh,
-                     const std::string& key,
-                     Eigen::MatrixXd& matrix)
-{
-  std::vector<std::vector<double>> mtx;
-  if (!rosparam_utilities::getParamMatrix<double>(nh, key, mtx))
-    return false;
-
-  int nrows, ncols;
-  nrows = mtx.size();
-  if (nrows>0)
-    ncols = mtx.at(0).size();
-  else
-    ncols = 0;
-
-  matrix.resize(nrows, ncols);
-  for (int iR = 0;iR<nrows;iR++)
-    for (int iC = 0;iC<ncols;iC++)
-      matrix(iR, iC) = mtx.at(iR).at(iC);
-
-  return true;
-}
-
-inline bool getParam(const ros::NodeHandle& nh,
-                     const std::string& key,
-                     Eigen::VectorXd& vector)
-{
-  std::vector<double> vtc;
-  if (!nh.getParam(key,vtc))
-    return false;
-
-  int nrows;
-  nrows = vtc.size();
-
-  vector.resize(nrows);
-  for (int iR = 0;iR<nrows;iR++)
-    vector(iR) = vtc.at(iR);
-
-  return true;
-}
-
 inline std::string to_string(const double& m, bool transpose = true)
 {
     std::ostringstream out;
