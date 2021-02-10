@@ -1,9 +1,10 @@
-#pragma once
+#pragma once //workaround qtcreator clang-tidy
 
 #ifndef EIGEN_STATE_SPACE_SYSTEMS__OPERATIONS_IMPL_H
 #define EIGEN_STATE_SPACE_SYSTEMS__OPERATIONS_IMPL_H
 
-#include<eigen_matrix_utils/eigen_matrix_utils.h>
+#include <random>
+#include<eigen_matrix_utils/overloads.h>
 
 namespace eigen_utils
 {
@@ -16,7 +17,7 @@ namespace eigen_utils
 template<typename Derived,
          std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic) 
                         || (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic) 
-                        , int> = 0> 
+                        , int> >
 inline bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
 {
   Eigen::MatrixBase<Derived>& mat = const_cast< Eigen::MatrixBase<Derived>& >(m);
@@ -43,7 +44,7 @@ inline bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
 template<typename Derived,
          std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic) 
                         && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic) 
-                        , int> = 0> 
+                        , int> >
 inline bool resize(Eigen::MatrixBase<Derived> const & /*m*/, int rows, int cols)
 {
   return Eigen::MatrixBase<Derived>::RowsAtCompileTime == rows 
@@ -65,7 +66,7 @@ inline bool resize(const double& /*m*/, int rows, int cols)
 template<typename Derived,
         std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic) 
                         ||(Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic) 
-                        , int> = 0>
+                        , int> >
 inline bool checkInputDim(const std::string& id, const Eigen::MatrixBase<Derived>& m, int rows, int cols, std::string& error)
 {
   if((m.rows()!= rows)||(m.cols()!= cols))
@@ -86,7 +87,7 @@ inline bool checkInputDim(const std::string& id, const Eigen::MatrixBase<Derived
 template<typename Derived,
         std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic) 
                         && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic) 
-                        , int> = 0> 
+                        , int> >
 inline bool checkInputDim(const std::string& id, const Eigen::MatrixBase<Derived>& m, int rows, int cols, std::string& error)
 {
   return Eigen::MatrixBase<Derived>::RowsAtCompileTime == rows 
@@ -184,6 +185,19 @@ inline bool copy(Eigen::MatrixBase<Derived>& lhs, const std::vector<double>& rhs
   return true;
 }
 
+// matrix, double
+template<typename Derived>
+inline bool copy(std::vector<double>& lhs, const Eigen::MatrixBase<Derived>& rhs)
+{
+  if(int(lhs.size())!=rhs.rows())
+  {
+    lhs.resize(rhs.rows());
+  }
+  for(int i=0;i<rhs.rows();i++)
+    lhs.at(size_t(i)) = rhs(i);
+  return true;
+}
+
 
 
 // A least-squares solution of m*x = rhs
@@ -237,6 +251,23 @@ void setIdentity(Eigen::MatrixBase<Derived>& m)
 }
 
 
+inline void setRandom(double& m)
+{
+ double lower_bound = 0;
+ double upper_bound = 10000;
+ std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
+ std::default_random_engine re;
+ m = unif(re);
+}
+
+template<typename Derived>
+inline void setRandom(Eigen::MatrixBase<Derived>& m)
+{
+  m.setRandom();
+}
+
+
+
 inline double* data(double& v)
 {
   return &v;
@@ -257,9 +288,9 @@ inline const double* data(const double& v)
 }
 
 template<typename Derived>
-inline const typename Derived::Scalar* data(const Eigen::Ref<Derived const>& m)
+inline const typename Derived::Scalar* data(const Eigen::MatrixBase<Derived>& m)
 {
-  return m.data();
+  return m.derived().data();
 }
 
 inline const double& at(const double& v, const int& i, const int& j)

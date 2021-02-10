@@ -2,6 +2,7 @@
 #define EIGEN_MATH_UTILS_OVERLOADS_H
 
 #include <iostream>
+#include <vector>
 #include <Eigen/Dense>
 #include <type_traits>
 
@@ -17,6 +18,7 @@ template<typename D>              bool copy(double& lhs, const Eigen::MatrixBase
 template<typename D, typename E>  bool copy(Eigen::MatrixBase<D> & lhs,const Eigen::MatrixBase<E>& rhs);
 template<typename D>              bool copy(Eigen::MatrixBase<D>& lhs, const double& rhs);
 template<typename D>              bool copy(Eigen::MatrixBase<D>& lhs, const std::vector<double>& rhs);
+template<typename D>              bool copy(std::vector<double>& lhs, const Eigen::MatrixBase<D>& rhs);
 
 
 //! copy_to_block
@@ -78,7 +80,7 @@ double* data(double& v);
 const double* data(const double& v);
 
 template<typename D> typename D::Scalar* data(Eigen::MatrixBase<D>& m);
-template<typename D> const typename D::Scalar* data(const Eigen::Ref<D const>& m);
+template<typename D> const typename D::Scalar* data(const Eigen::MatrixBase<D>& m);
 
 
 //! at
@@ -186,6 +188,11 @@ bool solve(Eigen::MatrixBase<D>& x, const Eigen::MatrixXd& A, const double& b);
 void setConstant(double& m, const double& v);
 
 template<typename D> void setConstant(Eigen::MatrixBase<D>& m, const double& v) ;
+
+//! setRandom
+void setRandom(double& m);
+
+template<typename D> void setRandom(Eigen::MatrixBase<D>& m);
 
 //! setDiagonal
 void setDiagonal(double& m, const double& v);

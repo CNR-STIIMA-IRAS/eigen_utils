@@ -76,6 +76,11 @@ inline std::string to_string(const Eigen::MatrixBase<Derived>& m, bool transpose
   return ss.str();
 }
 
+inline unsigned int factorial(unsigned int n)
+{
+    return (n == 0) ? 1 : n * factorial(n - 1);
+}
+
 
 
 };
