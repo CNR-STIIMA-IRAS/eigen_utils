@@ -15,10 +15,10 @@ find_package(Eigen3 REQUIRED COMPONENTS Core Dense)
 
 
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include ${EIGEN3_INCLUDE_DIRS}
   LIBRARIES eigen_matrix_utils
   CATKIN_DEPENDS rosparam_utilities
-  DEPENDS 
+  DEPENDS
 )
 
 include_directories(
