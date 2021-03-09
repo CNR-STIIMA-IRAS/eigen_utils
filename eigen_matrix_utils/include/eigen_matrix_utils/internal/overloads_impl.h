@@ -658,10 +658,34 @@ inline void setDiagonal(double& m, const double& v)
   m = v;
 }
 
+inline void setDiagonal(double& m, const std::vector<double>& v)
+{
+  if(v.size()!=1) throw std::runtime_error("setDiagonal failed! The input vector has the size greater than 1!");
+  m = v.front();
+}
+
+template<typename D>
+inline void setDiagonal(double& m, const Eigen::MatrixBase<D>& v)
+{
+  if(v.size()!=1) throw std::runtime_error("setDiagonal failed! The input vector has the size greater than 1!");
+  m = v(0,0);
+}
+
 template<typename Derived>
 inline void setDiagonal(Eigen::MatrixBase<Derived>& m, const double& v)
 {
   m.diagonal().setConstant(v);
+}
+
+template<typename D>
+inline void setDiagonal(Eigen::MatrixBase<D>& m, const std::vector<double>& v)
+{
+  if(v.size()!=std::min(m.rows(), m.cols()))
+    throw std::runtime_error("setDiagonal failed! The input vector has the size greater than the matrix!");
+  for(size_t i=0;i<v.size();i++)
+  {
+    m(static_cast<int>(i),static_cast<int>(i)) = v.at(i);
+  }
 }
 
 

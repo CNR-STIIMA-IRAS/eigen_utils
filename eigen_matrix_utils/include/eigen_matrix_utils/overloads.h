@@ -199,7 +199,13 @@ template<typename D> void setRandom(Eigen::MatrixBase<D>& m);
 //! setDiagonal
 void setDiagonal(double& m, const double& v);
 
+void setDiagonal(double& m, const std::vector<double>& v);
+
+template<typename D> void setDiagonal(double& m, const Eigen::MatrixBase<D>& v);
+
 template<typename D> void setDiagonal(Eigen::MatrixBase<D>& m, const double& v);
+
+template<typename D> void setDiagonal(Eigen::MatrixBase<D>& m, const std::vector<double>& v);
 
 //! saturate
 void saturate(double& v, const double& min, const double& max);
