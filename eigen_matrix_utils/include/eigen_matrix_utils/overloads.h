@@ -175,12 +175,14 @@ template<typename D>
 const Eigen::Block<D> block(const Eigen::MatrixBase<D>& m,
                           Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols);
 
-//!solve
-bool solve(double& ret, const double& A, const double& b );
+//!solve A x = b x = b/A
+bool solve(double& x, const double& A, const double& b );
 
+//!solve A x = b x = b/A
 template<typename D>
 bool solve(Eigen::MatrixBase<D>& x, const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
 
+//!solve A x = b x = b/A
 template<typename D>
 bool solve(Eigen::MatrixBase<D>& x, const Eigen::MatrixXd& A, const double& b);
 

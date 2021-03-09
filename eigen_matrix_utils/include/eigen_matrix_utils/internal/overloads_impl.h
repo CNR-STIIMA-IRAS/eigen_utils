@@ -563,18 +563,33 @@ inline bool copy_from_block(double& lhs, const Eigen::MatrixBase<Derived>& rhs,
 
 
 
-
-inline bool solve(double& ret, const double& A, const double& b )
+//! A x = b --> x = b /A
+inline bool solve(double& x, const double& A, const double& b )
 {
-  ret = b / A;
+  x = b / A;
   return true;
 }
 
+//! A x = b --> x = b /A
 template<typename Derived>
 inline bool solve(Eigen::MatrixBase<Derived>& x, const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
   Eigen::VectorXd _x;
-  if((A.rows()==A.cols()) && (eigen_utils::rank(A) == A.rows()))
+  if(A.rows()==A.cols() && A.rows()==1 && b.rows()==1)
+  {
+    double __x;
+    if(solve(__x, A(0,0), b(0)))
+    {
+      _x.resize(1);
+      _x(0) = __x;
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  else   if((A.rows()==A.cols()) && (eigen_utils::rank(A) == A.rows()))
   {
     _x = A.fullPivLu().solve(b);
   }
@@ -596,7 +611,21 @@ inline bool solve(Eigen::MatrixBase<Derived>& x, const Eigen::MatrixXd& A, const
 {
   Eigen::VectorXd _b(1); _b << b;
   Eigen::VectorXd _x;
-  if((A.rows()==A.cols()) && (eigen_utils::rank(A) == A.rows()))
+  if(A.rows()==A.cols() && A.rows()==1)
+  {
+    double __x;
+    if(solve(__x, A(0,0), _b(0)))
+    {
+      _x.resize(1);
+      _x(0) = __x;
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  else if((A.rows()==A.cols()) && (eigen_utils::rank(A) == A.rows()))
   {
     _x = A.fullPivLu().solve(_b);
   }
