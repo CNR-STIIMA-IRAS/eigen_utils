@@ -14,7 +14,7 @@ namespace eigen_utils
 {
 
 template <typename Derived>
-double standard_deviation(const Eigen::MatrixBase<Derived>& vet)
+inline double standard_deviation(const Eigen::MatrixBase<Derived>& vet)
 {
   static int  nrows  = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
   static Derived mean_vet;
@@ -29,7 +29,7 @@ double standard_deviation(const Eigen::MatrixBase<Derived>& vet)
 
 
 template <typename Derived>
-double correlation(const Eigen::MatrixBase<Derived>& vet1, const Eigen::MatrixBase<Derived>& vet2)
+inline double correlation(const Eigen::MatrixBase<Derived>& vet1, const Eigen::MatrixBase<Derived>& vet2)
 {
   static int nrows = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
   static Eigen::VectorXd mean_vet1(nrows);
@@ -53,27 +53,6 @@ double correlation(const Eigen::MatrixBase<Derived>& vet1, const Eigen::MatrixBa
   
   return ( vet1_no_mean.dot(vet2_no_mean) ) / std::sqrt( ( vet1_no_mean.dot(vet1_no_mean) ) * ( vet2_no_mean.dot(vet2_no_mean) ) );
   
-}
-
-
-inline std::string to_string(const double& m, bool transpose = true)
-{
-    std::ostringstream out;
-    out.precision(4);
-    out << std::fixed << m;
-    return out.str();
-}
-
-template<typename Derived>
-inline std::string to_string(const Eigen::MatrixBase<Derived>& m, bool transpose = true)
-{
-  Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
-  std::stringstream ss;
-  if(transpose)
-    ss << m.transpose().format(CleanFmt);
-  else
-    ss << m.format(CleanFmt);
-  return ss.str();
 }
 
 inline unsigned int factorial(unsigned int n)

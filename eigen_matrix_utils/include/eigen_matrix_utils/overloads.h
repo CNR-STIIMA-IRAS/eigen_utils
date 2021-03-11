@@ -236,6 +236,12 @@ using DivType = Eigen::Matrix<typename AType::Scalar, BType::ColsAtCompileTime, 
 
 template<typename AType, typename BType>
 DivType<AType, BType> div(const AType& a, const BType& b);
+
+//============
+std::string to_string(const double& m, bool transpose = true);
+
+template<typename Derived>
+std::string to_string(const Eigen::MatrixBase<Derived>& m, bool transpose = true);
   
 }  // namesapce eigen_utils
 
