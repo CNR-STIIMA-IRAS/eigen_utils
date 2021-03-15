@@ -680,7 +680,7 @@ inline void setDiagonal(Eigen::MatrixBase<Derived>& m, const double& v)
 template<typename D>
 inline void setDiagonal(Eigen::MatrixBase<D>& m, const std::vector<double>& v)
 {
-  if(v.size()!=std::min(m.rows(), m.cols()))
+  if(static_cast<int>(v.size())!=std::min(m.rows(), m.cols()))
     throw std::runtime_error("setDiagonal failed! The input vector has the size greater than the matrix!");
   for(size_t i=0;i<v.size();i++)
   {
