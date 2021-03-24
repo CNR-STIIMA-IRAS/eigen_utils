@@ -363,6 +363,11 @@ inline int rows(const double& m)
   return 1;
 }
 
+inline int rows(const std::vector<double>& m)
+{
+  return static_cast<int>(m.size());
+}
+
 template<typename Derived>
 inline int rows(const Eigen::MatrixBase<Derived>& m)
 {
@@ -674,7 +679,9 @@ inline void setDiagonal(double& m, const Eigen::MatrixBase<D>& v)
 template<typename Derived>
 inline void setDiagonal(Eigen::MatrixBase<Derived>& m, const double& v)
 {
-  m.diagonal().setConstant(v);
+  for(int i=0;i<rows(m);i++)
+    for(int j=0;j<cols(m);j++)
+      m(i,j)=v;
 }
 
 template<typename D>

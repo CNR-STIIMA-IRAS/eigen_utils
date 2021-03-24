@@ -107,6 +107,7 @@ template<typename D> int size(const Eigen::MatrixBase<D>& m);
 
 //!rows
 int rows(const double& m);
+int rows(const std::vector<double>& m);
 template<typename D> int rows(const Eigen::MatrixBase<D>& m);
 
 
