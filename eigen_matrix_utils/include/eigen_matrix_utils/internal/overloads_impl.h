@@ -679,9 +679,9 @@ inline void setDiagonal(double& m, const Eigen::MatrixBase<D>& v)
 template<typename Derived>
 inline void setDiagonal(Eigen::MatrixBase<Derived>& m, const double& v)
 {
+  if(rows(m) != cols(m)) throw std::runtime_error("The input matrix is not squared!");
   for(int i=0;i<rows(m);i++)
-    for(int j=0;j<cols(m);j++)
-      m(i,j)=v;
+      m(i,i)=v;
 }
 
 template<typename D>
