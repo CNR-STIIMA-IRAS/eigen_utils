@@ -706,9 +706,9 @@ inline void saturate(Eigen::MatrixBase<Derived>& m, const double& min, const dou
 {
   for(int i=0;i<m.rows();i++)
   {
-    for(int j=0;j<m.rows();j++)
+    for(int j=0;j<m.cols();j++)
     {
-        m(i,j) = std::max(std::min(m(i,j), max), min);
+      m(i,j) = std::max(std::min(m(i,j), max), min);
     }
   }
 }
@@ -727,7 +727,7 @@ inline void saturate(Eigen::MatrixBase<Derived>& m,
   {
     for(int j=0;j<m.cols();j++)
     {
-        m(i,j) = std::max(std::min(m(i,j), max(i,j)), min(i,j));
+      m(i,j) = std::max(std::min(m(i,j), max(i,j)), min(i,j));
     }
   }
 }

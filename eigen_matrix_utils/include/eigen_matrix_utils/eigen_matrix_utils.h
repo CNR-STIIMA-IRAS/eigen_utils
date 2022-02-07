@@ -7,9 +7,6 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-#include <ros/node_handle.h>
-#include <rosparam_utilities/rosparam_utilities.h>
-
 namespace eigen_utils
 {
 

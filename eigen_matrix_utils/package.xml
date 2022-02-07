@@ -10,11 +10,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>eigen</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rosparam_utilities</build_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <exec_depend>rosparam_utilities</exec_depend>
-  <exec_depend>roscpp</exec_depend>
 
   <build_depend>eigen</build_depend>
   <build_depend>rostest</build_depend>  
