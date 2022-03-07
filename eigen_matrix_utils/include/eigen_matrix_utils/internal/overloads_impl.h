@@ -796,9 +796,9 @@ inline std::string to_string(const Eigen::MatrixBase<Derived>& m, bool transpose
   Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
   std::stringstream ss;
   if(transpose)
-    ss << m.transpose().format(CleanFmt);
+    ss << std::fixed << m.transpose().format(CleanFmt);
   else
-    ss << m.format(CleanFmt);
+    ss << std::fixed << m.format(CleanFmt);
   return ss.str();
 }
   
