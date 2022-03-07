@@ -801,7 +801,7 @@ inline std::string to_string(const Eigen::MatrixBase<Derived>& m, bool transpose
     ss << std::fixed << m.format(CleanFmt);
   return ss.str();
 }
-  
+
 }  // namesapce eigen_utils
 
-#endif
+#endif  //EIGEN_STATE_SPACE_SYSTEMS__OPERATIONS_IMPL_H
