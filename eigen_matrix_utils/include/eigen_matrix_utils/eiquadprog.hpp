@@ -544,7 +544,7 @@ inline void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u
 #ifdef TRACE_SOLVER
   std::cerr << "Delete constraint " << l << ' ' << iq;
 #endif
-	int i, j, k, qq;
+	int i, j, k, qq = 0;
 	double cc, ss, h, xny, t1, t2;
   
 	/* Find the index qq for active constraint l to be removed */
