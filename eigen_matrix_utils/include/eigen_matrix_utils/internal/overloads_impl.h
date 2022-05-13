@@ -3,6 +3,12 @@
 #ifndef EIGEN_STATE_SPACE_SYSTEMS__OPERATIONS_IMPL_H
 #define EIGEN_STATE_SPACE_SYSTEMS__OPERATIONS_IMPL_H
 
+#if !defined(__PRETTY_FUNCTION__) && !defined(__GNUC__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
+#define UNUSED(expr) do { (void)(expr); } while (0)
+
 #include <random>
 #include<eigen_matrix_utils/overloads.h>
 
@@ -54,8 +60,9 @@ inline bool resize(Eigen::MatrixBase<Derived> const & /*m*/, int rows, int cols)
 /**
  * RESIZE - SAFE FUNCTION CALLED ONLY IF THE MATRIX IS DYNAMICALLY CREATED AT RUNTIME
  */
-inline bool resize(const double& /*m*/, int rows, int cols)
+inline bool resize(const double& m, int rows, int cols)
 {
+  UNUSED(m);
   return rows==1 && cols ==1;
 }
 
@@ -90,12 +97,16 @@ template<typename Derived,
                         , int> >
 inline bool checkInputDim(const std::string& id, const Eigen::MatrixBase<Derived>& m, int rows, int cols, std::string& error)
 {
+  UNUSED(id);
+  UNUSED(m);
+  UNUSED(error);
   return Eigen::MatrixBase<Derived>::RowsAtCompileTime == rows 
       && Eigen::MatrixBase<Derived>::ColsAtCompileTime == cols;
 }
 
 inline bool checkInputDim(const std::string& id, const double& m, int rows, int cols, std::string& error)
 {
+  UNUSED(error); UNUSED(m); UNUSED(id);
   return rows == 1 && cols == 1;
 }
 
@@ -111,6 +122,7 @@ inline void checkInputDimAndThrowEx(const std::string& id, const Eigen::MatrixBa
 
 inline void checkInputDimAndThrowEx(const std::string& id, const double& m, int rows, int cols)
 {
+  UNUSED(m);
   if(rows !=1 && cols !=1)
   {
     throw std::runtime_error((id + ": expected a 1x1 (double) while a matrix has been assigned").c_str());
@@ -222,6 +234,7 @@ inline bool svd(const double& m,
                 const double& rhs,
                 double&       x)
 {
+  UNUSED(m);
   x = rhs; // state at the begin of initialization interval
   return true;
 }
@@ -333,6 +346,7 @@ inline double norm(const Eigen::MatrixBase<Derived>& m)
 
 inline double normalized(const double& m)
 {
+  UNUSED(m);
   return 1.0;
 }
 
@@ -348,6 +362,7 @@ inline Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Deriv
 
 inline int size(const double& m)
 {
+  UNUSED(m);
   return 1;
 }
 
@@ -360,6 +375,7 @@ inline int size(const Eigen::MatrixBase<Derived>& m)
 
 inline int rows(const double& m)
 {
+  UNUSED(m);
   return 1;
 }
 
@@ -377,6 +393,7 @@ inline int rows(const Eigen::MatrixBase<Derived>& m)
 
 inline int rank(const double& m)
 {
+  UNUSED(m);
   return 1;
 }
 
@@ -389,6 +406,7 @@ inline int rank(const Eigen::MatrixBase<Derived>& m)
 
 inline int cols(const double& m)
 {
+  UNUSED(m);
   return 1;
 }
 
@@ -400,11 +418,13 @@ inline int cols(const Eigen::MatrixBase<Derived>& m)
 
 inline double& block(double& m, Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
 {
+  UNUSED(startRow); UNUSED(startCol); UNUSED(blockRows); UNUSED(blockCols); 
   return m;
 }
 
 inline const double& block(const double& m, Eigen::Index startRow, Eigen::Index startCol, Eigen::Index blockRows, Eigen::Index blockCols)
 {
+  UNUSED(startRow); UNUSED(startCol); UNUSED(blockRows); UNUSED(blockCols); 
   return m;
 }
 
@@ -784,10 +804,11 @@ inline DivType<AType, BType> div(const AType& a, const BType& b)
 
 inline std::string to_string(const double& m, bool transpose)
 {
-    std::ostringstream out;
-    out.precision(4);
-    out << std::fixed << m;
-    return out.str();
+  UNUSED(transpose);
+  std::ostringstream out;
+  out.precision(4);
+  out << std::fixed << m;
+  return out.str();
 }
 
 template<typename Derived>
