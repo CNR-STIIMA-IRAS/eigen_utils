@@ -59,6 +59,6 @@ inline unsigned int factorial(unsigned int n)
 
 
 
-};
+}
 
 #endif
