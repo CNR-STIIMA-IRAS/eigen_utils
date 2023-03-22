@@ -17,17 +17,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {
-            name: "Ubuntu Debug", artifact: "Linux.tar.xz",
-            os: ubuntu-20.04,
-            build_type: "Debug", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
-          }
+        - {name: "Ubuntu Debug", artifact: "Linux.tar.xz", os: ubuntu-20.04, build_type: "Debug", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2" }
+        - {name: "Ubuntu Latest", artifact: "Linux.tar.xz", os: ubuntu-22.04, build_type: "Debug", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2" }
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
     - name: Install dependencies
       if: ${{ runner.os == 'Linux' }}
-      run: sudo apt-get update && sudo apt-get install -y --fix-missing libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree lcov gcovr  libboost-filesystem-dev
+      run: sudo apt-get update && sudo apt-get install -y --fix-missing libyaml-cpp-dev libboost-date-time-dev cmake tree lcov gcovr  libboost-filesystem-dev
       # python3-coverage
 
     - name: Download Ninja and CMake
@@ -104,7 +101,7 @@ jobs:
 
         execute_process(
           COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
-            -S .
+            -S ./eigen_matrix_utils/
             -B build
             -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
             -D USE_ROS1=OFF
