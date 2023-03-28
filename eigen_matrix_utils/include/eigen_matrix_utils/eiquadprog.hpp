@@ -2,6 +2,18 @@
 #define _EIGEN_QUADSOLVE_HPP_
 
 
+template<typename T>
+void maybe_unused(T const & v) 
+{ 
+  static_cast<void>(v);
+}
+
+template<typename T, typename... Args>
+void maybe_unused(T first, Args... args) {
+  maybe_unused(first);
+  return maybe_unused(args...);
+}
+
 /*
  FILE eiquadprog.hh
  
@@ -177,6 +189,8 @@ inline double solve_quadprog2(LLT<MatrixXd,Lower> &chol,  double c1, VectorXd & 
   VectorXi A(m + p), A_old(m + p), iai(m + p), iaexcl(m+p);
   int q;
   int iq, iter = 0;
+
+  maybe_unused(q);
  	
   me = p; /* number of equality constraints */
   mi = m; /* number of inequality constraints */
