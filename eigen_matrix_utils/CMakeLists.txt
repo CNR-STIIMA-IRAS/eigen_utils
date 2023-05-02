@@ -100,7 +100,7 @@ else()
   )
 
   # export targets
-  set(export_targets ${export_targets};eigen_matrix_utils )
+  set(export_targets ${export_targets};eigen_matrix_utils)
   export(EXPORT export_eigen_matrix_utils
     FILE "${PROJECT_BINARY_DIR}/export_eigen_matrix_utils.cmake")
 

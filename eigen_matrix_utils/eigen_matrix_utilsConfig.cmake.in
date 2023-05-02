@@ -10,7 +10,6 @@ set(eigen_matrix_utils_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 include("${eigen_matrix_utils_DIR}/export_eigen_matrix_utils.cmake")
 
 # These are IMPORTED targets created by eigen_matrix_utilsTargets.cmake
-set(eigen_matrix_utils_LIBRARIES eigen_matrix_utils_utilities)
+set(eigen_matrix_utils_LIBRARIES eigen_matrix_utils)
 
-set(eigen_matrix_utils_EXECUTABLE eigen_matrix_utils_server)
 
